@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css'
+import './App.css';
 
-const MOCK_API_URL = 'https://654babf05b38a59f28ef7ea3.mockapi.io/houses'; // Замініть {projectId} на ваш ID проекту
+const MOCK_API_URL = 'https://654babf05b38a59f28ef7ea3.mockapi.io/houses';
 
 const HouseList = ({ houses, onDelete }) => (
   <div>
@@ -10,7 +10,7 @@ const HouseList = ({ houses, onDelete }) => (
     <ul>
       {houses.map(house => (
         <li key={house.id}>
-          {house.name}
+          {house.name} - ${house.price}
           <button onClick={() => onDelete(house.id)}>Delete</button>
         </li>
       ))}
@@ -20,11 +20,13 @@ const HouseList = ({ houses, onDelete }) => (
 
 const HouseForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name });
+    onSubmit({ name, price });
     setName('');
+    setPrice('');
   };
 
   return (
@@ -32,6 +34,10 @@ const HouseForm = ({ onSubmit }) => {
       <label>
         Name:
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      </label>
+      <label>
+        Price:
+        <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} />
       </label>
       <button type="submit">Add House</button>
     </form>
@@ -42,9 +48,8 @@ const App = () => {
   const [houses, setHouses] = useState([]);
 
   useEffect(() => {
-    axios.get(MOCK_API_URL)
-      .then(response => setHouses(response.data))
-      .catch(error => console.error('Error fetching houses:', error));
+    
+    fetchHouses();
   }, []);
 
   const fetchHouses = () => {
@@ -53,8 +58,8 @@ const App = () => {
       .catch(error => console.error('Error fetching houses:', error));
   };
 
-  const addHouse = ({ name }) => {
-    axios.post(MOCK_API_URL, { name })
+  const addHouse = ({ name, price }) => {
+    axios.post(MOCK_API_URL, { name, price })
       .then(fetchHouses)
       .catch(error => console.error('Error adding house:', error));
   };
